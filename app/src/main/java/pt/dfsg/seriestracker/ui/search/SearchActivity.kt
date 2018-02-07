@@ -1,7 +1,7 @@
 package pt.dfsg.seriestracker.ui.search
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,69 +12,60 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.android.synthetic.main.content_search.*
+import org.jetbrains.anko.toast
 import pt.dfsg.seriestracker.R
-import pt.dfsg.seriestracker.data.remote.RepositoryProvider
+import pt.dfsg.seriestracker.data.model.Show
+import pt.dfsg.seriestracker.ui.BaseActivity
 import java.util.concurrent.TimeUnit
 
 
-class SearchActivity : AppCompatActivity() {
-
-    private val repository = RepositoryProvider.provideSearchRepository()
+class SearchActivity : BaseActivity(), SearchAdapter.ClickCallBack {
 
     private lateinit var disposable: Disposable
     private var disposableContainer = CompositeDisposable()
+
     private lateinit var searchAdapter: SearchAdapter
+    private lateinit var viewModel: SearchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_search)
+        setSupportActionBar(toolbar)
 
-        searchAdapter = SearchAdapter()
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener())
+
+        searchAdapter = SearchAdapter(this)
         list.layoutManager = LinearLayoutManager(this)
         list.adapter = searchAdapter
 
+        viewModel = ViewModelProviders.of(this).get(SearchViewModel::class.java)
+
+        setSearchTextObservable()
+
     }
 
-    override fun onStart() {
-        super.onStart()
-
+    private fun setSearchTextObservable() {
         val buttonClickStream = buttonClickObservable()
         val textChangeStream = textChangeObservable()
-
         val searchTextObservable = Observable.merge<String>(buttonClickStream, textChangeStream)
 
         disposable = searchTextObservable
-            .subscribeOn(Schedulers.computation())
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { showProgress() }
+            .doOnNext { progress(true) }
             .doOnComplete { disposableContainer.clear() }
             .subscribe({
-                repository.fetchShowRx(it)
-                    .subscribeOn(Schedulers.computation())
+                viewModel.getShowRx(it)
+                    .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         searchAdapter.setData(it)
-                        hideProgress()
-                    }, { error ->
-                        error.printStackTrace()
-                        Log.d("error2", "${error.message}")
-                    }
-                    )
-            }, { error ->
-                error.printStackTrace()
-                Log.d("error1", "${error.message}")
-            }
-            )
-
-    }
-
-    private fun showProgress() {
-        progressBar.visibility = View.VISIBLE
-    }
-
-    private fun hideProgress() {
-        progressBar.visibility = View.GONE
+                        for (item in it) Log.d("[SHOW] :", "$item")
+                        progress(false)
+                    }, { handleError(it) })
+            }, { handleError(it) })
     }
 
     private fun buttonClickObservable(): Observable<String> {
@@ -107,6 +98,16 @@ class SearchActivity : AppCompatActivity() {
         return textChangeObservable
             .filter { it.length >= 5 }
             .debounce(2000, TimeUnit.MILLISECONDS)
+    }
+
+    private fun progress(visibility: Boolean) {
+        progressBar.visibility = if (visibility) View.VISIBLE else View.GONE
+    }
+
+
+    override fun onItemClick(show: Show) {
+        toast(show.toString())
+        viewModel.addShow(show)
     }
 
     override fun onStop() {
