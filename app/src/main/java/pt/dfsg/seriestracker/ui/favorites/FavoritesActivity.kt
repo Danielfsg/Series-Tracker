@@ -4,9 +4,9 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_favorites.*
-import kotlinx.android.synthetic.main.content_favorites.*
-import org.jetbrains.anko.toast
+import kotlinx.android.synthetic.main.content_list.*
 import pt.dfsg.seriestracker.R
 import pt.dfsg.seriestracker.data.model.Show
 import pt.dfsg.seriestracker.ui.BaseActivity
@@ -21,13 +21,13 @@ class FavoritesActivity : BaseActivity(), FavoritesAdapter.ClickCallBack {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favorites)
         setSupportActionBar(toolbar)
+        supportActionBar?.title = getString(R.string.title_favorites)
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener())
 
         favoritesAdapter = FavoritesAdapter(this)
         list.layoutManager = LinearLayoutManager(this)
         list.adapter = favoritesAdapter
-
 
         viewModel = ViewModelProviders.of(this).get(FavoritesViewModel::class.java)
 
@@ -37,6 +37,6 @@ class FavoritesActivity : BaseActivity(), FavoritesAdapter.ClickCallBack {
     }
 
     override fun onItemClick(show: Show) {
-        toast("${show.name}")
+        Toast.makeText(this, "${show.name}", Toast.LENGTH_SHORT).show()
     }
 }

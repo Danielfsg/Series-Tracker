@@ -14,7 +14,6 @@
 
         <activity
             android:name=".ui.favorites.FavoritesActivity"
-            android:label="@string/title_activity_favorites"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,9 +24,7 @@
 
         <activity
             android:name=".ui.search.SearchActivity"
-            android:label="@string/title_activity_search"
             android:theme="@style/AppTheme.NoActionBar">
-
         </activity>
 
     </application>

@@ -1,9 +1,8 @@
 package pt.dfsg.seriestracker.ui
 
+import android.content.Intent
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.singleTop
 import pt.dfsg.seriestracker.R
 import pt.dfsg.seriestracker.ui.favorites.FavoritesActivity
 import pt.dfsg.seriestracker.ui.search.SearchActivity
@@ -14,12 +13,12 @@ import java.net.SocketTimeoutException
 
 abstract class BaseActivity : AppCompatActivity() {
 
+
     fun handleError(throwable: Throwable) {
         when (throwable) {
             is HttpException -> throwable.printStackTrace() // TODO()
             is SocketTimeoutException -> throwable.printStackTrace() // handle timeout from Retrofit
             is IOException -> throwable.printStackTrace() // file was not found, do something
-
         }
     }
 
@@ -27,11 +26,21 @@ abstract class BaseActivity : AppCompatActivity() {
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
-                    startActivity(intentFor<FavoritesActivity>().singleTop())
+                    startActivity(
+                        Intent(this, FavoritesActivity::class.java)
+                            .apply {
+                                flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                            }
+                    )
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_search -> {
-                    startActivity(intentFor<SearchActivity>().singleTop())
+                    startActivity(
+                        Intent(this, SearchActivity::class.java)
+                            .apply {
+                                flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                            }
+                    )
                     return@OnNavigationItemSelectedListener true
                 }
             }

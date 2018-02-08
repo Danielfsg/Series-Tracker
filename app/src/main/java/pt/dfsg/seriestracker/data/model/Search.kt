@@ -53,10 +53,6 @@ data class Externals(
     var imdb: String?
 )
 
-data class Nextsepisode(
-    @ColumnInfo(name = "next_episode_href") var href: String?
-)
-
 data class Network(
     @ColumnInfo(name = "id_network") var id: Int?,
     @ColumnInfo(name = "network_name") var name: String?,
