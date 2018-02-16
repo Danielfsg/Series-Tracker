@@ -2,14 +2,15 @@ package pt.dfsg.seriestracker.ui.favorites
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_favorites.*
 import kotlinx.android.synthetic.main.content_list.*
 import pt.dfsg.seriestracker.R
 import pt.dfsg.seriestracker.data.model.Show
 import pt.dfsg.seriestracker.ui.BaseActivity
+import pt.dfsg.seriestracker.ui.detail.DetailActivity
 
 class FavoritesActivity : BaseActivity(), FavoritesAdapter.ClickCallBack {
 
@@ -37,6 +38,11 @@ class FavoritesActivity : BaseActivity(), FavoritesAdapter.ClickCallBack {
     }
 
     override fun onItemClick(show: Show) {
-        Toast.makeText(this, "${show.name}", Toast.LENGTH_SHORT).show()
+        startActivity(
+            Intent(this, DetailActivity::class.java)
+                .apply {
+                    putExtra("SHOW", show)
+                }
+        )
     }
 }

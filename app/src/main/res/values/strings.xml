@@ -7,5 +7,15 @@
 
     <string name="title_search">Search</string>
     <string name="title_favorites">Favorites</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="action_settings">Settings</string>
+
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tab_text_1">Favorites</string>
+    <string name="tab_text_2">Search</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="show_name">Show Name:</string>
 
 </resources>

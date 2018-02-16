@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.Toast
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_search.*
@@ -23,7 +22,6 @@ import java.util.concurrent.TimeUnit
 class SearchActivity : BaseActivity(), SearchAdapter.ClickCallBack {
 
     private lateinit var disposable: Disposable
-    private var disposableContainer = CompositeDisposable()
 
     private lateinit var searchAdapter: SearchAdapter
     private lateinit var viewModel: SearchViewModel
@@ -82,7 +80,6 @@ class SearchActivity : BaseActivity(), SearchAdapter.ClickCallBack {
             searchView.setOnQueryTextListener(textWatcher)
             emitter.setCancellable { searchView.setOnQueryTextListener(null) }
         }
-
         return textChangeObservable
             .filter { it.length >= 5 }
             .debounce(1000, TimeUnit.MILLISECONDS)
@@ -101,7 +98,6 @@ class SearchActivity : BaseActivity(), SearchAdapter.ClickCallBack {
         if (!disposable.isDisposed) {
             disposable.dispose()
         }
-        disposableContainer.clear()
         super.onStop()
     }
 

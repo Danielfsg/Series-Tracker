@@ -18,7 +18,6 @@ class FavoritesViewModel constructor(app: Application) : AndroidViewModel(app) {
         favoritesList = appDatabase?.showDao()?.getAllShows()
     }
 
-
     fun getFavorites(): LiveData<List<Show>>? {
         return favoritesList
     }
