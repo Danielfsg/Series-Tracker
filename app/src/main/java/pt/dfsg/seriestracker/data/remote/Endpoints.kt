@@ -2,7 +2,7 @@ package pt.dfsg.seriestracker.data.remote
 
 class Endpoints {
     companion object {
-        const val ROOT_URl = "http://api.tvmaze.com "
+        const val ROOT_URl = "http://api.tvmaze.com"
         const val SEARCH = "/search/shows"
 //        const val SEARCH = "$ROOT_URl/search/search?q=:{query}"
 //        const val LIST_ALL_SHOWS = "$ROOT_URl/search"
