@@ -3,7 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/activity_horizontal_margin"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+    android:layout_marginStart="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     tools:context="pt.dfsg.seriestracker.ui.detail.DetailActivity">
 
@@ -11,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/show_name"
+        android:textSize="@dimen/detail_label_size"
         android:textStyle="bold" />
 
     <TextView
@@ -21,7 +25,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Premiered on:"
+        android:text="@string/premiered_on"
+        android:textSize="@dimen/detail_label_size"
         android:textStyle="bold" />
 
     <TextView
@@ -32,7 +37,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Status:"
+        android:text="@string/status"
+        android:textSize="@dimen/detail_label_size"
         android:textStyle="bold" />
 
     <TextView
@@ -43,7 +49,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Runtime:"
+        android:text="@string/runtime"
+        android:textSize="@dimen/detail_label_size"
         android:textStyle="bold" />
 
     <TextView
@@ -54,7 +61,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Channel:"
+        android:text="@string/channel"
+        android:textSize="@dimen/detail_label_size"
         android:textStyle="bold" />
 
     <TextView
@@ -65,7 +73,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Rating:"
+        android:text="@string/rating"
+        android:textSize="@dimen/detail_label_size"
         android:textStyle="bold" />
 
     <TextView
@@ -76,7 +85,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Summary:"
+        android:text="@string/summary"
+        android:textSize="@dimen/detail_label_size"
         android:textStyle="bold" />
 
     <TextView
