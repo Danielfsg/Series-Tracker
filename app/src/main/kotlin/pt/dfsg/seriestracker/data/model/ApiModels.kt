@@ -8,18 +8,32 @@ import kotlinx.android.parcel.Parcelize
 import pt.dfsg.seriestracker.data.room.RoomContract
 import pt.dfsg.seriestracker.data.room.RoomConverters
 
+data class APIError(
+    var name: String?,
+    var message: String?,
+    var code: Int?,
+    var status: Int?,
+    var previous: Previous?
+) {
+    data class Previous(
+        var name: String?,
+        var message: String?,
+        var code: Int?
+    )
+}
+
 data class Search(
     var score: Double?,
     var show: Show?
 )
 
-
 @SuppressLint("ParcelCreator")
 @Parcelize
-@Entity(tableName = RoomContract.TABLE_NAME)
+@Entity(tableName = RoomContract.TABLE_SHOW)
 @TypeConverters(RoomConverters::class)
 data class Show(
-    @PrimaryKey(autoGenerate = true) var id: Int,
+    @PrimaryKey
+    var id: Long,
     var url: String?,
     var name: String?,
     var type: String?,
@@ -37,8 +51,48 @@ data class Show(
     @Embedded var rating: Rating?,
     @Embedded var externals: Externals?,
     @Embedded var network: Network?,
+    @Embedded var webChannel: WebChannel?,
+    var isFavorite: Boolean = false
+) : Parcelable
+
+@SuppressLint("ParcelCreator")
+@Parcelize
+@Entity(tableName = RoomContract.TABLE_SEASON)
+data class Season(
+    var id_show: Long,
+    @PrimaryKey
+    var id: Long,
+    var url: String?,
+    var number: Int?,
+    var name: String?,
+    var episodeOrder: Int?,
+    var premiereDate: String?,
+    var endDate: String?,
+    var summary: String?,
+    @Embedded var image: Image?,
+    @Embedded var network: Network?,
     @Embedded var webChannel: WebChannel?
 ) : Parcelable
+
+@SuppressLint("ParcelCreator")
+@Parcelize
+@Entity(tableName = RoomContract.TABLE_EPISODE)
+data class Episode(
+    var id_season: Long,
+    @PrimaryKey
+    var id: Long,
+    var url: String?,
+    var name: String?,
+    var season: Int?,
+    var number: Int?,
+    var airdate: String?,
+    var airtime: String?,
+    var airstamp: String?,
+    var runtime: Int?,
+    @Embedded var image: Image?,
+    var summary: String?
+) : Parcelable
+
 
 @SuppressLint("ParcelCreator")
 @Parcelize

@@ -1,11 +1,11 @@
-package pt.dfsg.seriestracker.ui
+package pt.dfsg.seriestracker.ui.main
 
 import android.arch.lifecycle.*
 import io.reactivex.disposables.CompositeDisposable
 import pt.dfsg.seriestracker.data.model.Search
 import pt.dfsg.seriestracker.data.model.Show
 import pt.dfsg.seriestracker.data.repository.SeriesRepository
-import pt.dfsg.seriestracker.di.SeriesApplication
+import pt.dfsg.seriestracker.SeriesApplication
 import javax.inject.Inject
 
 class SeriesViewModel : ViewModel(), LifecycleObserver {
@@ -24,19 +24,15 @@ class SeriesViewModel : ViewModel(), LifecycleObserver {
     fun searchShow(query: String): LiveData<List<Search>>? {
         liveSearchList = null
         liveSearchList = MutableLiveData<List<Search>>()
-        liveSearchList = seriesRepository.searchShow(query)
+        liveSearchList = seriesRepository.searchShowFromRemote(query)
         return liveSearchList
     }
 
     fun getFavorites(): LiveData<List<Show>>? {
         liveShowList = null
         liveShowList = MutableLiveData<List<Show>>()
-        liveShowList = seriesRepository.getShowFromDB()
+        liveShowList = seriesRepository.getShowsFromRoom()
         return liveShowList
-    }
-
-    fun addShow(show: Show) {
-        seriesRepository.addShow(show)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

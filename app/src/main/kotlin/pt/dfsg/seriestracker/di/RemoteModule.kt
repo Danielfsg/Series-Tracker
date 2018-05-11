@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import pt.dfsg.seriestracker.data.remote.RemoteContract
 import pt.dfsg.seriestracker.data.remote.RemoteSeriesService
 import retrofit2.Retrofit
@@ -13,7 +12,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-@Module
+@Module(includes = [(OkHttpClientModule::class)])
 class RemoteModule {
 
     @Provides
@@ -22,15 +21,19 @@ class RemoteModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().addInterceptor(
-        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-    ).build()
+    fun provideGsonConverterFactory(gson: Gson): GsonConverterFactory =
+        GsonConverterFactory.create(gson)
+
 
     @Provides
     @Singleton
-    fun provideRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit =
-        Retrofit.Builder().baseUrl(RemoteContract.ROOT_URl)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+    fun provideRetrofit(
+        okHttpClient: OkHttpClient,
+        gsonConverterFactory: GsonConverterFactory
+    ): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(RemoteContract.ROOT_URl)
+            .addConverterFactory(gsonConverterFactory)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(okHttpClient)
             .build()

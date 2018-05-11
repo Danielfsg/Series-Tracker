@@ -2,6 +2,7 @@ package pt.dfsg.seriestracker.ui.search
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -17,8 +18,10 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.content_list.*
 import kotlinx.android.synthetic.main.fragment_search.*
 import pt.dfsg.seriestracker.R
+import pt.dfsg.seriestracker.data.model.Search
 import pt.dfsg.seriestracker.data.model.Show
-import pt.dfsg.seriestracker.ui.SeriesViewModel
+import pt.dfsg.seriestracker.ui.detail.DetailActivity
+import pt.dfsg.seriestracker.ui.main.SeriesViewModel
 import pt.dfsg.seriestracker.utils.handleError
 import java.util.concurrent.TimeUnit
 
@@ -27,6 +30,8 @@ class SearchFragment : Fragment(), SearchAdapter.ClickCallBack {
     private lateinit var disposable: Disposable
 
     private lateinit var searchAdapter: SearchAdapter
+
+    private var searchList: List<Search>? = null
 
     private var seriesViewModel: SeriesViewModel? = null
 
@@ -48,6 +53,7 @@ class SearchFragment : Fragment(), SearchAdapter.ClickCallBack {
         searchAdapter = SearchAdapter(this)
         list.layoutManager = LinearLayoutManager(context)
         list.adapter = searchAdapter
+        searchList?.let { searchAdapter.setData(it) }
 
 
         setSearchTextObservable()
@@ -66,6 +72,7 @@ class SearchFragment : Fragment(), SearchAdapter.ClickCallBack {
             .subscribe({
                 seriesViewModel?.searchShow(it)?.observe(this, Observer { showList ->
                     if (showList != null) {
+                        searchList = showList
                         searchAdapter.setData(showList)
                     }
                     progress(false)
@@ -89,10 +96,11 @@ class SearchFragment : Fragment(), SearchAdapter.ClickCallBack {
                 }
             }
             searchView.addTextChangedListener(textWatcher)
-            emitter.setCancellable { searchView.addTextChangedListener(null) }
+            emitter.setCancellable { searchView.removeTextChangedListener(textWatcher) }
+
         }
         return textChangeObservable
-            .filter { it.length >= 5 }
+            .filter { it.length >= 2 }
             .debounce(1000, TimeUnit.MILLISECONDS)
     }
 
@@ -101,14 +109,19 @@ class SearchFragment : Fragment(), SearchAdapter.ClickCallBack {
     }
 
     override fun onItemClick(show: Show) {
-        seriesViewModel?.addShow(show)
+        startActivity(
+            Intent(context, DetailActivity::class.java)
+                .apply {
+                    putExtra("SHOW", show)
+                }
+        )
     }
 
     override fun onStop() {
+        super.onStop()
         if (!disposable.isDisposed) {
             disposable.dispose()
         }
-        super.onStop()
     }
 
     companion object {

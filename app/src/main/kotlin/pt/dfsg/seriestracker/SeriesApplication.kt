@@ -1,6 +1,8 @@
-package pt.dfsg.seriestracker.di
+package pt.dfsg.seriestracker
 
 import android.app.Application
+import pt.dfsg.seriestracker.di.*
+import timber.log.Timber
 
 class SeriesApplication : Application() {
 
@@ -11,14 +13,22 @@ class SeriesApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         initializeDagger()
+        initializeTimber()
     }
 
-    fun initializeDagger() {
+    private fun initializeDagger() {
         appComponent = DaggerAppComponent.builder()
             .appModule(AppModule(this))
+            .okHttpClientModule(OkHttpClientModule())
             .roomModule(RoomModule())
             .remoteModule(RemoteModule())
             .build()
+    }
+
+    private fun initializeTimber() {
+        Timber.uprootAll()
+        Timber.plant(Timber.DebugTree())
+
     }
 
 }

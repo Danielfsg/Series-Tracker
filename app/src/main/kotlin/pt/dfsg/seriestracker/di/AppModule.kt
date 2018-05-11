@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import pt.dfsg.seriestracker.SeriesApplication
 import javax.inject.Singleton
 
 @Module

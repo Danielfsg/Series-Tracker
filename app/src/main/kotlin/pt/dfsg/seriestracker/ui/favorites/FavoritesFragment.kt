@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.content_list.*
 import pt.dfsg.seriestracker.R
 import pt.dfsg.seriestracker.data.model.Show
-import pt.dfsg.seriestracker.ui.SeriesViewModel
+import pt.dfsg.seriestracker.ui.main.SeriesViewModel
 import pt.dfsg.seriestracker.ui.detail.DetailActivity
 
 
