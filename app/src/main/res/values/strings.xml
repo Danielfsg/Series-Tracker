@@ -14,5 +14,6 @@
     <string name="channel">Channel:</string>
     <string name="rating">Rating:</string>
     <string name="summary">Summary:</string>
+    <string name="sumary">Sumary:</string>
 
 </resources>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="4dp"
+        app:contentPadding="8dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+            <android.support.v7.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="6dp"
+                app:layout_constraintBottom_toTopOf="@id/label_summary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/guideline3"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/title_favorites"
+                    android:scaleType="centerCrop" />
+            </android.support.v7.widget.CardView>
+
+            <TextView
+                android:id="@+id/label_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/show_name"
+                android:textSize="@dimen/detail_label_size"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/show_name"
+                app:layout_constraintEnd_toStartOf="@id/guideline3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/show_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/label_premiered"
+                app:layout_constraintEnd_toStartOf="@id/guideline3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_name" />
+
+            <TextView
+                android:id="@+id/label_premiered"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/premiered_on"
+                android:textSize="@dimen/detail_label_size"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/show_premiered"
+                app:layout_constraintEnd_toStartOf="@id/guideline3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/show_name" />
+
+            <TextView
+                android:id="@+id/show_premiered"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/label_status"
+                app:layout_constraintEnd_toStartOf="@id/guideline3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_premiered" />
+
+            <TextView
+                android:id="@+id/label_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/status"
+                android:textSize="@dimen/detail_label_size"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/show_status"
+                app:layout_constraintEnd_toStartOf="@id/guideline3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/show_premiered" />
+
+            <TextView
+                android:id="@+id/show_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/label_runtime"
+                app:layout_constraintEnd_toStartOf="@id/guideline3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_status" />
+
+            <TextView
+                android:id="@+id/label_runtime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/runtime"
+                android:textSize="@dimen/detail_label_size"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/show_runtime"
+                app:layout_constraintEnd_toStartOf="@id/guideline3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/show_status" />
+
+            <TextView
+                android:id="@+id/show_runtime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/label_channel"
+                app:layout_constraintEnd_toStartOf="@id/guideline3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_runtime" />
+
+            <TextView
+                android:id="@+id/label_channel"
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:text="@string/channel"
+                android:textSize="@dimen/detail_label_size"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/show_channel"
+                app:layout_constraintEnd_toStartOf="@id/guideline3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/show_runtime" />
+
+            <TextView
+                android:id="@+id/show_channel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/label_rating"
+                app:layout_constraintEnd_toStartOf="@id/guideline3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_channel" />
+
+            <TextView
+                android:id="@+id/label_rating"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/rating"
+                android:textSize="@dimen/detail_label_size"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/show_rating"
+                app:layout_constraintEnd_toStartOf="@id/guideline3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/show_channel" />
+
+            <TextView
+                android:id="@+id/show_rating"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/label_summary"
+                app:layout_constraintEnd_toStartOf="@id/guideline3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_rating" />
+
+            <TextView
+                android:id="@+id/label_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/summary"
+                android:textSize="@dimen/detail_label_size"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/show_summary"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/show_rating" />
+
+            <TextView
+                android:id="@+id/show_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_summary" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

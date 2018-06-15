@@ -11,7 +11,7 @@ import pt.dfsg.seriestracker.R
 class MainActivity : AppCompatActivity() {
 
 
-    private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
+    private var mMainPagerAdapter: MainPagerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,8 +19,8 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
-        mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
-        container.adapter = mSectionsPagerAdapter
+        mMainPagerAdapter = MainPagerAdapter(supportFragmentManager)
+        container.adapter = mMainPagerAdapter
         container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
 

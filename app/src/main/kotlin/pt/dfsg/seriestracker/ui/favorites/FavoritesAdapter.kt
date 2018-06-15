@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.list_item.view.*
+import kotlinx.android.synthetic.main.item_show.view.*
 import pt.dfsg.seriestracker.R
 import pt.dfsg.seriestracker.data.model.Show
 import pt.dfsg.seriestracker.utils.load
@@ -37,7 +37,7 @@ class FavoritesAdapter(private var clickCallBack: FavoritesAdapter.ClickCallBack
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.list_item, parent, false)
+                .inflate(R.layout.item_show, parent, false)
         )
     }
 

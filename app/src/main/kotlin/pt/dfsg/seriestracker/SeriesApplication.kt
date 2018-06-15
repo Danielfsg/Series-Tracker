@@ -4,6 +4,7 @@ import android.app.Application
 import pt.dfsg.seriestracker.di.*
 import timber.log.Timber
 
+
 class SeriesApplication : Application() {
 
     companion object {
@@ -14,6 +15,7 @@ class SeriesApplication : Application() {
         super.onCreate()
         initializeDagger()
         initializeTimber()
+
     }
 
     private fun initializeDagger() {
@@ -28,7 +30,16 @@ class SeriesApplication : Application() {
     private fun initializeTimber() {
         Timber.uprootAll()
         Timber.plant(Timber.DebugTree())
-
     }
+
+//    private fun initializeSonar() {
+//        if (BuildConfig.DEBUG && SonarUtils.shouldEnableSonar(this)) {
+//            val client = AndroidSonarClient.getInstance(this)
+//            client.addPlugin(InspectorSonarPlugin(this, DescriptorMapping.withDefaults()))
+//            client.addPlugin(NetworkSonarPlugin())
+//            client.start()
+//
+//        }
+//    }
 
 }

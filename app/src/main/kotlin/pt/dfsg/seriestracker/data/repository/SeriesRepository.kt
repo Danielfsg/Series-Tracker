@@ -7,6 +7,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.experimental.async
+import pt.dfsg.seriestracker.data.model.Episode
 import pt.dfsg.seriestracker.data.model.Search
 import pt.dfsg.seriestracker.data.model.Season
 import pt.dfsg.seriestracker.data.model.Show
@@ -26,9 +27,9 @@ class SeriesRepository @Inject constructor(
 
     private val roomSeriesDao = roomSeriesDataSource.showDao()
 
-    /*************************************
-     *  Shows
-     *************************************/
+    //------------------------------------
+    // Shows
+    //------------------------------------
 
     override fun searchShowFromRemote(query: String): LiveData<List<Search>> {
         val mutableLiveData = MutableLiveData<List<Search>>()
@@ -36,8 +37,11 @@ class SeriesRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { searchList -> mutableLiveData.value = searchList },
-                { t: Throwable? -> t!!.printStackTrace() })
+                {
+                    mutableLiveData.value = it
+                    Timber.d("Dispatching ${it.size} search list from Remote...")
+                },
+                { Timber.d(it) })
         allCompositeDisposable.add(disposable)
         return mutableLiveData
     }
@@ -48,51 +52,36 @@ class SeriesRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { showList -> mutableLiveData.value = showList },
-                { t: Throwable? -> t!!.printStackTrace() })
+                {
+                    mutableLiveData.value = it
+                    Timber.d("Dispatching ${it.size} shows list from Room...")
+                },
+                { Timber.d(it) })
         allCompositeDisposable.add(disposable)
         return mutableLiveData
     }
 
-    override fun addShow(show: Show) {
-        (async { roomSeriesDataSource.showDao().insertShow(show) })
+    override fun addShowAsync(show: Show) {
+        async { roomSeriesDataSource.showDao().insertShow(show) }
     }
 
 
-    override fun deleteShow(show: Show) {
-        (async { roomSeriesDataSource.showDao().deleteShow(show) })
+    override fun deleteShowAsync(show: Show) {
+        async {
+            roomSeriesDataSource.showDao().deleteShow(show)
+            roomSeriesDataSource.showDao().deleteSeasonByShowId(show.id)
+            roomSeriesDataSource.showDao().deleteEpisodeByShowId(show.id)
+        }
     }
 
-    /*************************************
-     *  Seasons
-     *************************************/
-/*
-    override fun getSeasonsFromRoom(showId: Long): Observable<List<Season>> =
-        roomSeriesDao.getSeason(showId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
-            .filter { it.isNotEmpty() }
-            .toObservable()
-            .doOnNext {
-                Timber.d("Dispatching ${it.size} users from Room...")
-            }
-
-    override fun getSeasonsFromRemote(showId: Long): Observable<List<Season>> =
-        remoteSeriesDataSource.season(showId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
-            .doOnNext {
-                Timber.d("Dispatching ${it.size} users from Remote...")
-                storeSeasonInRoom(it)
-            }
-
-    */
-
+    //------------------------------------
+    // Seasons
+    //------------------------------------
 
     override fun getSeasonsFromRoom(showId: Long): LiveData<List<Season>> {
         val roomSeriesDao = roomSeriesDataSource.showDao()
         val mutableLiveData = MutableLiveData<List<Season>>()
-        val disposable = roomSeriesDao.getSeason(showId)
+        val disposable = roomSeriesDao.getSeasonByShowId(showId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -105,14 +94,14 @@ class SeriesRepository @Inject constructor(
         return mutableLiveData
     }
 
-
-    override fun getSeasonsFromRemote(showId: Long): LiveData<List<Season>> {
+    override fun getSeasonsFromRemote(show: Show): LiveData<List<Season>> {
         val mutableLiveData = MutableLiveData<List<Season>>()
-        val disposable = remoteSeriesDataSource.season(showId)
+        val disposable = remoteSeriesDataSource.season(show.id)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
-                storeSeasonInRoom(it)
+                if (show.isFavorite)
+                    storeSeasonInRoom(show.id, it)
             }
             .subscribe(
                 {
@@ -126,13 +115,78 @@ class SeriesRepository @Inject constructor(
         return mutableLiveData
     }
 
-    private fun storeSeasonInRoom(seasonList: List<Season>) {
-        Observable.fromCallable { roomSeriesDao.insertAllSeasons(seasonList) }
+    private fun storeSeasonInRoom(showId: Long, seasonList: List<Season>) {
+        Observable.fromCallable {
+            seasonList.forEach {
+                it.id_show = showId
+                roomSeriesDao.insertSeason(it)
+            }
+        }
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .subscribe {
                 Timber.d("Inserted ${seasonList.size} items from Remote in Room...")
             }
     }
+
+    //------------------------------------
+    // Episodes
+    //------------------------------------
+
+    override fun getEpisodesFromRoom(showId: Long): LiveData<List<Episode>> {
+        val roomSeriesDao = roomSeriesDataSource.showDao()
+        val mutableLiveData = MutableLiveData<List<Episode>>()
+        val disposable = roomSeriesDao.getEpisodeByShowId(showId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    mutableLiveData.value = it
+                    Timber.d("Dispatching ${it.size} items from Room...")
+                },
+                { Timber.d(it) })
+        allCompositeDisposable.add(disposable)
+        return mutableLiveData
+    }
+
+    override fun getEpisodesByShowIdFromRemote(show: Show): LiveData<List<Episode>> {
+        val mutableLiveData = MutableLiveData<List<Episode>>()
+        val disposable = remoteSeriesDataSource.getEpisodeByShow(show.id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                if (show.isFavorite)
+                    storeEpisodeInRoom(show.id, it)
+            }
+            .subscribe(
+                {
+                    mutableLiveData.value = it
+                    Timber.d("Dispatching ${it.size} items from Remote...")
+                },
+                { Timber.d(it) }
+            )
+
+        allCompositeDisposable.add(disposable)
+        return mutableLiveData
+    }
+
+    override fun updateEpisodeAsync(episode: Episode) {
+        async { roomSeriesDataSource.showDao().updateEpisode(episode) }
+    }
+
+    private fun storeEpisodeInRoom(showId: Long, seasonList: List<Episode>) {
+        Observable.fromCallable {
+            seasonList.forEach {
+                it.id_show = showId
+                roomSeriesDao.insertEpisode(it)
+            }
+        }
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .subscribe {
+                Timber.d("Inserted ${seasonList.size} items from Remote in Room...")
+            }
+    }
+
 
 }

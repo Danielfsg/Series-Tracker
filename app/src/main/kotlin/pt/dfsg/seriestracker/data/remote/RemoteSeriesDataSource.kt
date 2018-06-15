@@ -1,5 +1,6 @@
 package pt.dfsg.seriestracker.data.remote
 
+import android.arch.lifecycle.LiveData
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import pt.dfsg.seriestracker.data.model.Episode
@@ -13,5 +14,7 @@ class RemoteSeriesDataSource @Inject constructor(private val remoteSeriesService
 
     fun season(showId: Long): Observable<List<Season>> = remoteSeriesService.season(showId)
 
-    fun episode(seasonId: Long): Observable<List<Episode>> = remoteSeriesService.episode(seasonId)
+    fun getEpisodeBySeason(seasonId: Long): Observable<List<Episode>> = remoteSeriesService.getEpisodeBySeason(seasonId)
+
+    fun getEpisodeByShow(seasonId: Long): Observable<List<Episode>> = remoteSeriesService.getEpisodeByShow(seasonId)
 }

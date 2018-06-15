@@ -1,5 +1,6 @@
 package pt.dfsg.seriestracker.utils
 
+import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
@@ -44,6 +45,10 @@ fun ImageView.load(path: String) {
 
 fun AppCompatActivity.toast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(this, message, duration).show()
+}
+
+fun Fragment.toast(context: Context?, message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(context ?: getContext(), message, duration).show()
 }
 
 fun AppCompatActivity.addFragment(fragment: Fragment, frameId: Int) {

@@ -1,6 +1,6 @@
 package pt.dfsg.seriestracker.data.remote
 
-import io.reactivex.Flowable
+import android.arch.lifecycle.LiveData
 import io.reactivex.Observable
 import pt.dfsg.seriestracker.data.model.Episode
 import pt.dfsg.seriestracker.data.model.Search
@@ -16,6 +16,9 @@ interface RemoteSeriesService {
     @GET(RemoteContract.SEASONS)
     fun season(@Path("showId") showId: Long): Observable<List<Season>>
 
-    @GET(RemoteContract.EPISODES)
-    fun episode(@Query("seasonId") seasonId: Long): Observable<List<Episode>>
+    @GET(RemoteContract.EPISODES_BY_SEASON)
+    fun getEpisodeBySeason(@Path("seasonId") seasonId: Long): Observable<List<Episode>>
+
+    @GET(RemoteContract.EPISODES_BY_SHOW)
+    fun getEpisodeByShow(@Path("showId") showId: Long): Observable<List<Episode>>
 }

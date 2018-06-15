@@ -40,30 +40,40 @@ kotlin {
 }
 
 dependencies {
+
+//    configurations.all {
+//        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+//            if (details.requested.group == 'com.android.support' && details.requested.name == 'exifinterface') {
+//                details.useVersion "27.1.1"
+//            }
+//        }
+//    }
+
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
     // Kotlin coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.1'
 
     // Android Support libs
-    String supportVersion = '27.1.0'
+    String supportVersion = '27.1.1'
     implementation "com.android.support:appcompat-v7:$supportVersion"
     implementation "com.android.support:recyclerview-v7:$supportVersion"
     implementation "com.android.support:cardview-v7:$supportVersion"
     implementation "com.android.support:support-v4:$supportVersion"
     implementation "com.android.support:design:$supportVersion"
+    implementation "com.android.support:exifinterface:$supportVersion"
 
     // Constraint Layout
-    String constraintVersion = '1.1.0'
+    String constraintVersion = '1.1.2'
     implementation "com.android.support.constraint:constraint-layout:$constraintVersion"
 
     // Android Architecture Components
     String lifecycleVersion = '1.1.1'
     implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
+    implementation 'com.android.support:support-v4:27.1.1'
     kapt "android.arch.lifecycle:compiler:$lifecycleVersion"
     implementation "android.arch.lifecycle:reactivestreams:$lifecycleVersion"
-
-
     String roomVersion = '1.1.0'
     implementation "android.arch.persistence.room:runtime:$roomVersion"
     kapt "android.arch.persistence.room:compiler:$roomVersion"
@@ -84,8 +94,9 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
 
     // OkHttp 3
-    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+    String okHttpVersion = '3.10.0'
+    implementation "com.squareup.okhttp3:okhttp:$okHttpVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
 
     // Gson
     implementation 'com.google.code.gson:gson:2.8.2'
@@ -94,6 +105,18 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
 
-    //Timber
+    // Glide
+    //String glideVersion = '4.7.1'
+    //implementation "com.github.bumptech.glide:glide:$glideVersion"
+    //annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
+
+    // Timber
     implementation 'com.jakewharton.timber:timber:4.7.0'
+
+    // Colorful
+    //implementation 'com.github.garretyoder:Colorful:2.3.3'
+
+    // Facebook Sonar
+    //debugImplementation 'com.facebook.sonar:sonar:0.0.1'
+
 }

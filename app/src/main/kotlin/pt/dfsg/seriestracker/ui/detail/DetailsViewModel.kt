@@ -3,6 +3,7 @@ package pt.dfsg.seriestracker.ui.detail
 import android.arch.lifecycle.*
 import io.reactivex.disposables.CompositeDisposable
 import pt.dfsg.seriestracker.SeriesApplication
+import pt.dfsg.seriestracker.data.model.Episode
 import pt.dfsg.seriestracker.data.model.Season
 import pt.dfsg.seriestracker.data.model.Show
 import pt.dfsg.seriestracker.data.repository.SeriesRepository
@@ -14,34 +15,72 @@ class DetailsViewModel : ViewModel(), LifecycleObserver {
     @Inject
     lateinit var seriesRepository: SeriesRepository
 
-    private var liveSeasonList: MutableLiveData<List<Season>>? = null
-
-    private val liveDataMerger: MediatorLiveData<List<Season>> = MediatorLiveData()
-
     private val compositeDisposable = CompositeDisposable()
+
+    private val resultSeason: MediatorLiveData<List<Season>> = MediatorLiveData()
+    private val resultEpisode: MediatorLiveData<List<Episode>> = MediatorLiveData()
+
+    private lateinit var show: Show
 
     init {
         initializeDagger()
     }
 
     fun addShow(show: Show) {
-        seriesRepository.addShow(show)
+        seriesRepository.addShowAsync(show)
     }
 
     fun delete(show: Show) {
-        seriesRepository.deleteShow(show)
+        seriesRepository.deleteShowAsync(show)
     }
 
-    fun getSeasons(showId: Long): MediatorLiveData<List<Season>>? {
+    fun getShow(): Show = show
 
-        liveDataMerger.addSource(
-            seriesRepository.getSeasonsFromRoom(showId),
-            { list -> liveDataMerger.value = list })
-        liveDataMerger.addSource(
-            seriesRepository.getSeasonsFromRemote(showId),
-            { list -> liveDataMerger.value = list })
+    fun setShow(show: Show) {
+        this.show = show
+    }
 
-        return liveDataMerger
+    fun getSeasons(): MediatorLiveData<List<Season>>? {
+        val dbSource = seriesRepository.getSeasonsFromRoom(show.id)
+        resultSeason.addSource(dbSource) { data ->
+            resultSeason.removeSource(dbSource)
+            if (data != null && data.isNotEmpty()) {
+                resultSeason.value = data
+            } else {
+                val apiSource = seriesRepository.getSeasonsFromRemote(show)
+                resultSeason.addSource(apiSource) { newData ->
+                    resultSeason.removeSource(apiSource)
+                    if (newData != null && newData.isNotEmpty()) {
+                        resultSeason.value = newData
+                    }
+                }
+            }
+        }
+        return resultSeason
+    }
+
+    fun getEpisodes(): MediatorLiveData<List<Episode>>? {
+        val dbSource = seriesRepository.getEpisodesFromRoom(show.id)
+        resultEpisode.addSource(dbSource) { data ->
+            resultEpisode.removeSource(dbSource)
+            if (data != null && data.isNotEmpty()) {
+                resultEpisode.value = data
+            } else {
+                val apiSource = seriesRepository.getEpisodesByShowIdFromRemote(show)
+                resultEpisode.addSource(apiSource) { newData ->
+                    resultEpisode.value = newData
+                    resultEpisode.removeSource(apiSource)
+                    if (newData != null && newData.isNotEmpty()) {
+                        resultEpisode.value = newData
+                    }
+                }
+            }
+        }
+        return resultEpisode
+    }
+
+    fun updateEpisode(episode: Episode){
+        seriesRepository.updateEpisodeAsync(episode)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -56,7 +95,6 @@ class DetailsViewModel : ViewModel(), LifecycleObserver {
         unSubscribeViewModel()
         super.onCleared()
     }
-
 
     private fun initializeDagger() = SeriesApplication.appComponent.inject(this)
 

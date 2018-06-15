@@ -10,35 +10,66 @@ import pt.dfsg.seriestracker.data.model.Show
 @Dao
 @TypeConverters(RoomConverters::class)
 interface RoomSeriesDao {
+
+    //------------------------------------
+    // Shows
+    //------------------------------------
+
     @Query("SELECT * FROM show")
     fun getAllShows(): Flowable<List<Show>>
 
     @Query("SELECT * FROM show WHERE id = :id")
-    fun getShowById(id: Int): Flowable<Show>
+    fun getShowById(id: Long): Flowable<Show>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertShow(show: Show)
 
+    @Update
+    fun updateShow(show: Show)
+
     @Delete
     fun deleteShow(show: Show)
 
-    @Update
-    fun update(show: Show)
+    @Query("DELETE FROM show WHERE id = :id")
+    fun deleteShowById(id: Long)
 
-    @Query("SELECT * FROM season WHERE id = :id")
-    fun getSeason(id: Long): Flowable<List<Season>>
+    //------------------------------------
+    // Seasons
+    //------------------------------------
+
+    @Query("SELECT * FROM season WHERE id_show = :id")
+    fun getSeasonByShowId(id: Long): Flowable<List<Season>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertSeason(season: Season)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAllSeasons(seasons: List<Season>)
+    @Update
+    fun updateSeason(season: Season)
 
-    @Query("SELECT * FROM episode WHERE id = :id")
-    fun getEpisode(id: Long): Flowable<List<Episode>>
+    @Delete
+    fun deleteSeason(season: Season)
+
+    @Query("DELETE FROM season WHERE id_show = :id")
+    fun deleteSeasonByShowId(id: Long)
+
+    //------------------------------------
+    // Episodes
+    //------------------------------------
+
+    @Query("SELECT * FROM episode WHERE id_show = :id")
+    fun getEpisodeByShowId(id: Long): Flowable<List<Episode>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertEpisode(episode: Episode)
+
+    @Update
+    fun updateEpisode(episode: Episode)
+
+    @Delete
+    fun deleteEpisode(episode: Episode)
+
+    @Query("DELETE FROM episode WHERE id_show = :id")
+    fun deleteEpisodeByShowId(id: Long)
 
 
 }
