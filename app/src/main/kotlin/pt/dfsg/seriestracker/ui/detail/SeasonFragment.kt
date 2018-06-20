@@ -1,7 +1,6 @@
 package pt.dfsg.seriestracker.ui.detail
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -16,6 +15,7 @@ import pt.dfsg.seriestracker.data.model.Episode
 import pt.dfsg.seriestracker.data.model.Season
 
 class SeasonFragment : Fragment(), SeasonAdapter.ClickCallBack {
+
 
     private lateinit var parentActivity: DetailActivity
     private lateinit var detailsViewModel: DetailsViewModel
@@ -32,6 +32,13 @@ class SeasonFragment : Fragment(), SeasonAdapter.ClickCallBack {
         return inflater.inflate(R.layout.fragment_season, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        seasonAdapter = SeasonAdapter(parentActivity,this)
+        rv_episodes.layoutManager = LinearLayoutManager(context)
+        rv_episodes.adapter = seasonAdapter
+    }
+
     override fun onStart() {
         super.onStart()
         initViewModel()
@@ -39,11 +46,19 @@ class SeasonFragment : Fragment(), SeasonAdapter.ClickCallBack {
     }
 
     private fun initSeasonInfo() {
-        val season = seasonList?.get(position - 1)
-        val seasonName = if (season?.name.isNullOrEmpty()) "TBD" else season?.name
-        season_name.text = seasonName
+        season_info_view.visibility = View.VISIBLE
+        season_name.visibility = View.VISIBLE
+        season_description.visibility = View.VISIBLE
 
-        val description = season?.summary ?: "No Description available"
+        val season = seasonList?.get(position - 1)
+        val seasonName = season?.name ?: "TBD"
+        season_name.text = seasonName
+        if (season?.name.isNullOrBlank()) season_name.visibility = View.GONE
+
+        var description = season?.summary
+        if (description == null || description.isEmpty() || description.isBlank())
+            description = "No Description available"
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             season_description.text = Html.fromHtml(description, Html.FROM_HTML_MODE_COMPACT)
         } else {
@@ -52,43 +67,53 @@ class SeasonFragment : Fragment(), SeasonAdapter.ClickCallBack {
 
     }
 
-    private fun initRecyclerView(episodes: List<Episode>?) {
-        seasonAdapter = SeasonAdapter(this)
-        rv_episodes.layoutManager = LinearLayoutManager(context)
-        rv_episodes.adapter = seasonAdapter
+    private fun updateRecyclerView(episodes: List<Episode>?) {
         if (episodes != null)
             seasonAdapter.setData(episodes)
     }
 
-    private fun initEpisodeView(list: List<Episode>?) {
-        val episodes = list?.filter { it.season == position }
-        episodes?.sortedBy { it.number }
-        initRecyclerView(episodes)
-    }
+    private fun selector(p: Episode): Int? = p.number
+
+    private fun filterList(list: List<Episode>?): List<Episode>? =
+        list?.filter { it.season == position }?.sortedBy { selector(it) }
+
 
     private fun initViewModel() {
-        detailsViewModel = ViewModelProviders.of(parentActivity).get(DetailsViewModel::class.java)
-        detailsViewModel.getEpisodes()?.observe(parentActivity, Observer {
-            episodeList = it
-            initEpisodeView(episodeList)
-        })
+        if (episodeList == null) {
+            detailsViewModel.getEpisodes()?.observe(parentActivity, Observer {
+                episodeList = it
+                updateRecyclerView(filterList(episodeList))
+            })
+        } else {
+            updateRecyclerView(filterList(episodeList))
+        }
     }
 
-    override fun onItemClick(episode: Episode) {
+    override fun onWatchedClick(episode: Episode, position: Int) {
         val ep = episodeList?.find { it == episode }
         episode.watched = !episode.watched
         ep?.watched = episode.watched
         detailsViewModel.updateEpisode(episode)
-        seasonAdapter.setData(episodeList?.filter { it.season == position }!!)
+        filterList(episodeList)?.let { seasonAdapter.updateItem(position, it) }
+    }
+
+    override fun onItemClick(episode: Episode, position: Int) {
+        episode.isOpen = !episode.isOpen
+        seasonAdapter.notifyItemChanged(position)
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(parent: DetailActivity, list: List<Season>, position: Int) =
-            SeasonFragment().apply {
-                this.parentActivity = parent
-                this.seasonList = list
-                this.position = position
-            }
+        fun newInstance(
+            parent: DetailActivity,
+            viewModel: DetailsViewModel,
+            list: List<Season>,
+            position: Int
+        ) = SeasonFragment().apply {
+            this.parentActivity = parent
+            this.detailsViewModel = viewModel
+            this.seasonList = list
+            this.position = position
+        }
     }
 }

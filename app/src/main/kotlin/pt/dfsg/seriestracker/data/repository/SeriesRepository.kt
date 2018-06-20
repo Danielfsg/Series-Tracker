@@ -87,7 +87,7 @@ class SeriesRepository @Inject constructor(
             .subscribe(
                 {
                     mutableLiveData.value = it
-                    Timber.d("Dispatching ${it.size} items from Room...")
+                    Timber.d("Dispatching ${it.size} Seasons from Room...")
                 },
                 { Timber.d(it) })
         allCompositeDisposable.add(disposable)
@@ -106,7 +106,7 @@ class SeriesRepository @Inject constructor(
             .subscribe(
                 {
                     mutableLiveData.value = it
-                    Timber.d("Dispatching ${it.size} items from Remote...")
+                    Timber.d("Dispatching ${it.size} Seasons from Remote...")
                 },
                 { Timber.d(it) }
             )
@@ -125,7 +125,7 @@ class SeriesRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .subscribe {
-                Timber.d("Inserted ${seasonList.size} items from Remote in Room...")
+                Timber.d("Inserted ${seasonList.size} Seasons from Remote in Room...")
             }
     }
 
@@ -142,26 +142,29 @@ class SeriesRepository @Inject constructor(
             .subscribe(
                 {
                     mutableLiveData.value = it
-                    Timber.d("Dispatching ${it.size} items from Room...")
+                    Timber.d("Dispatching ${it.size} Episodes from Room...")
                 },
                 { Timber.d(it) })
         allCompositeDisposable.add(disposable)
         return mutableLiveData
     }
 
-    override fun getEpisodesByShowIdFromRemote(show: Show): LiveData<List<Episode>> {
+    override fun getEpisodesByShowIdFromRemote(show: Show, update: Boolean): LiveData<List<Episode>> {
         val mutableLiveData = MutableLiveData<List<Episode>>()
         val disposable = remoteSeriesDataSource.getEpisodeByShow(show.id)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
                 if (show.isFavorite)
-                    storeEpisodeInRoom(show.id, it)
+                    if (update)
+                        updateEpisodesAsync(show.id, it)
+                    else
+                        storeEpisodeInRoom(show.id, it)
             }
             .subscribe(
                 {
                     mutableLiveData.value = it
-                    Timber.d("Dispatching ${it.size} items from Remote...")
+                    Timber.d("Dispatching ${it.size} EpisodesByShowId from Remote...")
                 },
                 { Timber.d(it) }
             )
@@ -174,19 +177,29 @@ class SeriesRepository @Inject constructor(
         async { roomSeriesDataSource.showDao().updateEpisode(episode) }
     }
 
-    private fun storeEpisodeInRoom(showId: Long, seasonList: List<Episode>) {
-        Observable.fromCallable {
-            seasonList.forEach {
+    private fun updateEpisodesAsync(showId: Long, episodeList: List<Episode>) {
+        async {
+            episodeList.forEach {
                 it.id_show = showId
-                roomSeriesDao.insertEpisode(it)
+                it.isOpen = false
+                roomSeriesDataSource.showDao().updateEpisode(it)
+            }
+        }
+    }
+
+    private fun storeEpisodeInRoom(showId: Long, episodeList: List<Episode>) {
+        Observable.fromCallable {
+            episodeList.forEach {
+                it.id_show = showId
+                it.isOpen = false
+                roomSeriesDataSource.showDao().insertEpisode(it)
             }
         }
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .subscribe {
-                Timber.d("Inserted ${seasonList.size} items from Remote in Room...")
+                Timber.d("Inserted ${episodeList.size} Episodes from Remote in Room...")
             }
     }
-
 
 }

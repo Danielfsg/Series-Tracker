@@ -3,6 +3,7 @@ package pt.dfsg.seriestracker.data.model
 import android.annotation.SuppressLint
 import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
@@ -25,5 +26,6 @@ data class Episode(
     var runtime: Int?,
     @Embedded var image: Image?,
     var summary: String?,
-    var watched: Boolean = false
+    var watched: Boolean = false,
+    var isOpen: Boolean = false
 ) : Parcelable

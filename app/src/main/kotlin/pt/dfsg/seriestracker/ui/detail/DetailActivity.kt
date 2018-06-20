@@ -42,11 +42,12 @@ class DetailActivity : AppCompatActivity() {
 
     private fun initViewpager(list: List<Season>?) {
         if (list != null) {
-            mMainPagerAdapter = DetailPagerAdapter(this, supportFragmentManager, list)
+            val filteredList = list.filter { !it.premiereDate.isNullOrEmpty() }.toList()
+            mMainPagerAdapter = DetailPagerAdapter(this, detailsViewModel, supportFragmentManager, filteredList)
             container.adapter = mMainPagerAdapter
             container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
             tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
-            (0..list.count()).forEach {
+            (0..filteredList.count()).forEach {
                 tabs.addTab(tabs.newTab().setText(mMainPagerAdapter.getPageTitle(it)))
             }
             detailsViewModel.getSeasons()?.removeObservers(this)
@@ -77,7 +78,7 @@ class DetailActivity : AppCompatActivity() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.getItem(0)?.let { setFavoriteIcon(it) }
+        menu?.getItem(1)?.let { setFavoriteIcon(it) }
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -85,6 +86,10 @@ class DetailActivity : AppCompatActivity() {
         when (item?.itemId) {
             android.R.id.home -> {
                 finish()
+            }
+            R.id.action_update -> {
+                //TODO:
+                return true
             }
             R.id.action_favorites -> {
                 show.isFavorite = !show.isFavorite

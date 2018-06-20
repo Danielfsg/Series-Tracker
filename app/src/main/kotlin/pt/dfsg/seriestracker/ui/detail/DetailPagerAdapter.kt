@@ -7,15 +7,16 @@ import pt.dfsg.seriestracker.data.model.Season
 
 class DetailPagerAdapter(
     private val parent: DetailActivity,
+    private val viewModel: DetailsViewModel,
     fragmentManager: FragmentManager,
     private var list : List<Season>
 ) : FragmentPagerAdapter(fragmentManager) {
 
     override fun getItem(position: Int): Fragment {
         return if (position == 0) {
-            DetailFragment.newInstance(parent)
+            DetailFragment.newInstance(parent, viewModel)
         } else {
-            SeasonFragment.newInstance(parent,list, position)
+            SeasonFragment.newInstance(parent, viewModel, list, position)
         }
     }
 

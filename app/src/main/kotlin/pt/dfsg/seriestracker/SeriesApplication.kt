@@ -38,7 +38,6 @@ class SeriesApplication : Application() {
 //            client.addPlugin(InspectorSonarPlugin(this, DescriptorMapping.withDefaults()))
 //            client.addPlugin(NetworkSonarPlugin())
 //            client.start()
-//
 //        }
 //    }
 

@@ -10,6 +10,7 @@ import android.widget.Toast
 import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
+import pt.dfsg.seriestracker.R
 import retrofit2.HttpException
 import java.io.IOException
 import java.lang.Exception
@@ -31,6 +32,7 @@ fun ImageView.load(path: String) {
     picasso
         .load(path)
         .networkPolicy(NetworkPolicy.OFFLINE)
+        .placeholder(R.drawable.ic_portrait_black_24dp)
         .into(this, object : Callback {
             override fun onSuccess() {
                 //Do nothing

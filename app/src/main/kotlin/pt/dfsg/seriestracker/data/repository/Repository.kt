@@ -26,7 +26,7 @@ interface Repository {
 
     //fun getEpisodesBySeasonIdFromRemote(seasonId: Long): LiveData<List<Episode>>
 
-    fun getEpisodesByShowIdFromRemote(show: Show): LiveData<List<Episode>>
+    fun getEpisodesByShowIdFromRemote(show: Show, update: Boolean): LiveData<List<Episode>>
 
     fun updateEpisodeAsync(episode: Episode)
 

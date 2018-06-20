@@ -66,7 +66,7 @@ class DetailsViewModel : ViewModel(), LifecycleObserver {
             if (data != null && data.isNotEmpty()) {
                 resultEpisode.value = data
             } else {
-                val apiSource = seriesRepository.getEpisodesByShowIdFromRemote(show)
+                val apiSource = seriesRepository.getEpisodesByShowIdFromRemote(show, false)
                 resultEpisode.addSource(apiSource) { newData ->
                     resultEpisode.value = newData
                     resultEpisode.removeSource(apiSource)
@@ -79,8 +79,19 @@ class DetailsViewModel : ViewModel(), LifecycleObserver {
         return resultEpisode
     }
 
-    fun updateEpisode(episode: Episode){
+    fun updateEpisode(episode: Episode) {
         seriesRepository.updateEpisodeAsync(episode)
+    }
+
+    fun refreshShowInfo() {
+        val apiSource = seriesRepository.getEpisodesByShowIdFromRemote(show, false)
+        resultEpisode.addSource(apiSource) { newData ->
+            resultEpisode.value = newData
+            resultEpisode.removeSource(apiSource)
+            if (newData != null && newData.isNotEmpty()) {
+                resultEpisode.value = newData
+            }
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

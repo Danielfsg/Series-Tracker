@@ -14,6 +14,9 @@
     <string name="channel">Channel:</string>
     <string name="rating">Rating:</string>
     <string name="summary">Summary:</string>
-    <string name="sumary">Sumary:</string>
+    <string name="description">Description</string>
+    <string name="next_episode">Next Episodes</string>
+    <string name="watched">Watched</string>
+    <string name="unwatched">Unwatched</string>
 
 </resources>
