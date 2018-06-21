@@ -53,10 +53,11 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     // Kotlin coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5'
 
     // Android Support libs
     String supportVersion = '27.1.1'
+    implementation "com.android.support:support-v4:$supportVersion"
     implementation "com.android.support:appcompat-v7:$supportVersion"
     implementation "com.android.support:recyclerview-v7:$supportVersion"
     implementation "com.android.support:cardview-v7:$supportVersion"
@@ -71,7 +72,6 @@ dependencies {
     // Android Architecture Components
     String lifecycleVersion = '1.1.1'
     implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
-    implementation 'com.android.support:support-v4:27.1.1'
     kapt "android.arch.lifecycle:compiler:$lifecycleVersion"
     implementation "android.arch.lifecycle:reactivestreams:$lifecycleVersion"
     String roomVersion = '1.1.0'
@@ -89,9 +89,10 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
 
     // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    String retrofitVersion = '2.4.0'
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
     // OkHttp 3
     String okHttpVersion = '3.10.0'
@@ -99,7 +100,7 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
 
     // Gson
-    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.code.gson:gson:2.8.5'
 
     // Picasso and OkHttp 3 Downloader
     implementation 'com.squareup.picasso:picasso:2.71828'
