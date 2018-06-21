@@ -13,7 +13,7 @@ This app served as a learning experience for some commom android libraries. It w
 - Timber
 - ...
 
-###Api
+### Api
 
 - [tvmaze](http://api.tvmaze.com)
 
